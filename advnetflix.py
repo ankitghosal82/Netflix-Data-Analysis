@@ -2,8 +2,8 @@
 
 import streamlit as st
 import pandas as pd
-import seaborn as sns
 import matplotlib.pyplot as plt
+import numpy as np
 import plotly.express as px
 
 # Page config
@@ -46,14 +46,36 @@ st.plotly_chart(fig1, use_container_width=True)
 # 3. Month-wise additions
 st.subheader("Monthly Additions")
 month_order = ['January','February','March','April','May','June','July','August','September','October','November','December']
-fig2 = px.bar(df_filtered['month_name_added'].value_counts().reindex(month_order), labels={'value':'Count', 'index':'Month'})
+month_counts = df_filtered['month_name_added'].value_counts().reindex(month_order).fillna(0)
+fig2 = px.bar(month_counts, labels={'value':'Count', 'index':'Month'})
 st.plotly_chart(fig2, use_container_width=True)
 
-# 4. Heatmap: Content Type vs Rating
+# 4. Heatmap: Content Type vs Rating (without seaborn)
 st.subheader("Heatmap: Type vs Rating")
+
 heatmap_data = pd.crosstab(df_filtered['type'], df_filtered['rating'])
-fig3, ax = plt.subplots()
-sns.heatmap(heatmap_data, cmap='coolwarm', annot=True, fmt='d', ax=ax)
+fig3, ax = plt.subplots(figsize=(8, 5))
+
+im = ax.imshow(heatmap_data, cmap='coolwarm')
+
+# Show all ticks and label them
+ax.set_xticks(np.arange(len(heatmap_data.columns)))
+ax.set_yticks(np.arange(len(heatmap_data.index)))
+ax.set_xticklabels(heatmap_data.columns)
+ax.set_yticklabels(heatmap_data.index)
+
+# Rotate the tick labels and set their alignment.
+plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+
+# Loop over data dimensions and create text annotations.
+for i in range(len(heatmap_data.index)):
+    for j in range(len(heatmap_data.columns)):
+        text = ax.text(j, i, heatmap_data.iloc[i, j], ha="center", va="center", color="black")
+
+ax.set_xlabel('Rating')
+ax.set_ylabel('Type')
+ax.set_title('Content Type vs Rating Heatmap')
+fig3.tight_layout()
 st.pyplot(fig3)
 
 # 5. Violin Plot: Year vs Content Type
@@ -78,4 +100,5 @@ st.plotly_chart(fig5)
 
 # Footer
 st.markdown("---")
-st.markdown("📊 Built with Python | Pandas | Seaborn | Plotly | Streamlit")
+st.markdown("📊 Built with Python | Pandas | Matplotlib | Plotly | Streamlit")
+
