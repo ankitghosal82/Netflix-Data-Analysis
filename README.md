@@ -4,7 +4,7 @@ This project explores and analyzes the Netflix Movies and TV Shows dataset using
 It focuses on understanding content trends, release patterns, content duration, and geographical distribution of Netflix content.
 
 ---
-..............
+...............
 ## 📊 Key Insights & Analysis
 
 - 📌 **Content Breakdown**: Distribution of Movies vs TV Shows
